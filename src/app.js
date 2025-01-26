@@ -3,15 +3,16 @@ const app = express();
 const {UserModel} = require('../models/users')
 const {connectDB} = require('../config/database');
 
-
+app.use(express.json());
 app.post('/signup',async(req,res)=>{
-    const newUser = new UserModel({
-        name:"Bobby",
-        email:"Bobby@gmail.com",
-        password:"test@123",
-    });
-    await newUser.save();
-    res.send("User added successfully");
+    console.log(req.body)
+    const newUser = new UserModel(req.body);
+    try {
+        await newUser.save();
+        res.send("User added successfully");
+    } catch (e) {
+        res.send("Error in saving data")
+    }
 })
 
 
