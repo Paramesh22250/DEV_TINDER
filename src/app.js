@@ -11,7 +11,7 @@ app.post('/signup',async(req,res)=>{
         await newUser.save();
         res.send("User added successfully");
     } catch (e) {
-        res.send("Error in saving data")
+        res.send("Error in saving data"+e)
     }
 })
 app.get("/feed",async(req,res)=>{
@@ -40,12 +40,20 @@ app.get("/user",async (req,res) => {
     }
 })
 
-app.patch("/user",async (req,res) => {
+app.patch("/user/:id",async (req,res) => {
+    const data=req.body;
+    const id = req.params.id;
+    console.log(data)
     try {
-        await UserModel.findOneAndUpdate({email:"Alice@gmail.com"},{email:"IamAlice@gmail.com"})
+        const allowed = ["about","age","password","name"];
+        const isAllowed = Object.keys(data).every((k)=>allowed.includes(k))
+        if(!isAllowed){
+            throw new Error("Invalid update")
+        }
+        await UserModel.findByIdAndUpdate(id,data)
         res.send("Upadated successfully")
     } catch (error) {
-        res.send("Something went wrong")
+        res.send("Something went wrong"+error)
     }
 })
 
